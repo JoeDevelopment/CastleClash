@@ -28,7 +28,7 @@ public class Mainplugin extends JavaPlugin {
 				if(e.getClickedBlock() != null && e.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
 					if(e.getClickedBlock().getType().equals(Material.SIGN_POST) || e.getClickedBlock().getType().equals(Material.WALL_SIGN)) {
 						Sign s = (Sign)e.getClickedBlock().getState();
-						if(s.getLine(0).equalsIgnoreCase("§3[CastleClash]") && s.getLine(0).equalsIgnoreCase("JOIN")) {
+						if(s.getLine(0).equalsIgnoreCase(ChatColor.DARK_AQUA+"[CastleClash]") && s.getLine(1).equalsIgnoreCase("JOIN")) {
 							e.getPlayer().sendMessage("This has not been implemented yet.");
 						}
 					} else if(e.getClickedBlock().getType().equals(Material.OBSIDIAN)) {
