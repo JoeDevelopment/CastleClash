@@ -13,8 +13,10 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class Mainplugin extends JavaPlugin {
@@ -38,19 +40,43 @@ public class Mainplugin extends JavaPlugin {
 							if(teamint == 1) {
 								if(Team1.addPlayer(e.getPlayer())) {
 									teamint++;
+									getServer().broadcastMessage(ChatColor.DARK_AQUA+"[CastleClash] "+ChatColor.GREEN+e.getPlayer().getName()+" joined the CastleClash game.");
+									if(teamint >= 3) {
+										teamint = 1;
+									}
 								} else {
-									e.getPlayer().sendMessage(ChatColor.DARK_AQUA+"[CastleClash]");
+									teamint++;
+									e.getPlayer().sendMessage(ChatColor.DARK_AQUA+"[CastleClash] "+ChatColor.RED+"Failed to join:");
+									e.getPlayer().sendMessage(ChatColor.DARK_AQUA+"[CastleClash] "+ChatColor.RED+" - You may already be in the game");
+									e.getPlayer().sendMessage(ChatColor.DARK_AQUA+"[CastleClash] "+ChatColor.RED+" - The team that you were attempted to be put in is full in which case you can try clicking the sign again");
+									e.getPlayer().sendMessage(ChatColor.DARK_AQUA+"[CastleClash] "+ChatColor.RED+" - The game has already started");
+									if(teamint >= 3) {
+										teamint = 1;
+									}
 								}
 							} else if(teamint == 2) {
 								if(Team2.addPlayer(e.getPlayer())) {
 									teamint++;
+									getServer().broadcastMessage(ChatColor.DARK_AQUA+"[CastleClash] "+ChatColor.GREEN+e.getPlayer().getName()+" joined the CastleClash game.");
+									if(teamint >= 3) {
+										teamint = 1;
+									}
 								} else {
-									
+									teamint++;
+									e.getPlayer().sendMessage(ChatColor.DARK_AQUA+"[CastleClash] "+ChatColor.RED+"Failed to join:");
+									e.getPlayer().sendMessage(ChatColor.DARK_AQUA+"[CastleClash] "+ChatColor.RED+" - You may already be in the game");
+									e.getPlayer().sendMessage(ChatColor.DARK_AQUA+"[CastleClash] "+ChatColor.RED+" - The team that you were attempted to be put in is full in which case you can try clicking the sign again");
+									e.getPlayer().sendMessage(ChatColor.DARK_AQUA+"[CastleClash] "+ChatColor.RED+" - The game has already started");
+									if(teamint >= 3) {
+										teamint = 1;
+									}
 								}
 							}
 						}
 					} else if(e.getClickedBlock().getType().equals(Material.OBSIDIAN)) {
 						if(ShopKeeper.contains(e.getClickedBlock().getLocation().getBlockX(),e.getClickedBlock().getLocation().getBlockY()-1,e.getClickedBlock().getLocation().getBlockZ())) {
+							ItemMeta meta = shop_CANNON.getItemMeta();
+							meta.setDisplayName(ChatColor.AQUA+"[Team] CANNON");
 							e.getPlayer().openInventory(shop);
 						}
 					}
@@ -65,6 +91,12 @@ public class Mainplugin extends JavaPlugin {
 						e.setCancelled(true);
 					}
 				}
+			}
+			
+			@EventHandler
+			public void onPlayerQuit(PlayerQuitEvent e) {
+				Team1.removePlayer(e.getPlayer());
+				Team2.removePlayer(e.getPlayer());
 			}
 		}, this);
 	}
@@ -82,6 +114,8 @@ public class Mainplugin extends JavaPlugin {
 			} else {
 				sender.sendMessage("§3[CastleClash: ADMIN] §cThere must be obsidian under you to register a shop.");
 			}
+		} else if(c.getName().equalsIgnoreCase("setTeamSpawnPoint")) {
+			sender.sendMessage("§3[CastleClash: ADMIN] §cThis has not been implemented yet. Contact the owner of the server if you think this is a mistake.");
 		}
 		return false;
 	}
