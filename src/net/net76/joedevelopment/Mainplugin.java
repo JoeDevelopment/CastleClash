@@ -138,7 +138,44 @@ public class Mainplugin extends JavaPlugin {
 			@EventHandler
 			public void onPlayerJoin(PlayerJoinEvent e) {
 				e.setJoinMessage(ChatColor.YELLOW+e.getPlayer().getName()+ChatColor.GRAY+" joined the game. "+ChatColor.BOLD+Bukkit.getServer().getOnlinePlayers().toArray().length+"/"+Bukkit.getServer().getMaxPlayers());
+				getServer().broadcastMessage(ChatColor.DARK_AQUA+"[CastleClash] "+ChatColor.GREEN+"A player has joined the game. A total of 6 players in the lobby are needed to start the game.");
 				e.getPlayer().chat("/spawn");
+				if(teamint == 1) {
+					if(Team1.addPlayer(e.getPlayer())) {
+						teamint++;
+						if(teamint >= 3) {
+							teamint = 1;
+						}
+					} else {
+						teamint++;
+						e.getPlayer().sendMessage(ChatColor.DARK_AQUA+"[CastleClash] "+ChatColor.RED+"Failed to join:");
+						e.getPlayer().sendMessage(ChatColor.DARK_AQUA+"[CastleClash] "+ChatColor.RED+" - You may already be in the game");
+						e.getPlayer().sendMessage(ChatColor.DARK_AQUA+"[CastleClash] "+ChatColor.RED+" - The team that you were attempted to be put in is full in which case you can try clicking the sign again");
+						e.getPlayer().sendMessage(ChatColor.DARK_AQUA+"[CastleClash] "+ChatColor.RED+" - The game has already started");
+						if(teamint >= 3) {
+							teamint = 1;
+						}
+					}
+				} else if(teamint == 2) {
+					if(Team2.addPlayer(e.getPlayer())) {
+						teamint++;
+						if(teamint >= 3) {
+							teamint = 1;
+						}
+					} else {
+						teamint++;
+						e.getPlayer().sendMessage(ChatColor.DARK_AQUA+"[CastleClash] "+ChatColor.RED+"Failed to join:");
+						e.getPlayer().sendMessage(ChatColor.DARK_AQUA+"[CastleClash] "+ChatColor.RED+" - You may already be in the game");
+						e.getPlayer().sendMessage(ChatColor.DARK_AQUA+"[CastleClash] "+ChatColor.RED+" - The team that you were attempted to be put in is full in which case you can try clicking the sign again");
+						e.getPlayer().sendMessage(ChatColor.DARK_AQUA+"[CastleClash] "+ChatColor.RED+" - The game has already started");
+						if(teamint >= 3) {
+							teamint = 1;
+						}
+					}
+				}
+				if(Team1.length() == 3 && Team2.length() == 3) {
+					ActiveGame.startGame();
+				}
 			}
 			
 			@EventHandler

@@ -45,4 +45,7 @@ public class Team1 {
 	public static Integer[] getSpawn() {
 		return new Integer[]{xspawn,yspawn,zspawn};
 	}
+	public static int length() {
+		return players.toArray().length;
+	}
 }
