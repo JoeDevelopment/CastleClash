@@ -2,3 +2,16 @@ name: CastleClash
 version: 0.2
 description: By awesomephones
 main: net.net76.joedevelopment.Mainplugin
+commands:
+  addshopblock:
+    description: Admin command, adds a shop block
+    usage: /addshopblock
+    permission: castleclash.addshopblock
+  removeshopblock:
+    description: Admin command, removes a shop block
+    usage: /removeshopblock
+    permission: castleclash.removeshopblock
+  removeallshops:
+    description: Admin command, removes all shop blocks
+    usage: /removeallshops
+    permission: castleclash.removeallshops

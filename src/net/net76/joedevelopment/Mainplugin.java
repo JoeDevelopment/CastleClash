@@ -1,6 +1,7 @@
 package net.net76.joedevelopment;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.bukkit.*;
 import org.bukkit.block.Sign;
@@ -11,6 +12,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
@@ -26,10 +28,11 @@ public class Mainplugin extends JavaPlugin {
 	private static int team2playeramount = 0;
 	private static Inventory shop = Bukkit.createInventory(null, 45, "Shop");
 	private static ItemStack shop_CANNON = new ItemStack(Material.TNT);
+	private static ItemStack shop_FENCE = new ItemStack(Material.FENCE);
+	private static ItemStack shop_BONE = new ItemStack(Material.BONE);
 	private static ArrayList<Player> team1players = new ArrayList<Player>();
 	
 	public void onEnable() {
-		shop.addItem(shop_CANNON);
 		getServer().getPluginManager().registerEvents(new Listener() {
 			@EventHandler
 			public void onPlayerInteract(PlayerInteractEvent e) {
@@ -74,19 +77,51 @@ public class Mainplugin extends JavaPlugin {
 							}
 						}
 					} else if(e.getClickedBlock().getType().equals(Material.OBSIDIAN)) {
-						if(ShopKeeper.contains(e.getClickedBlock().getLocation().getBlockX(),e.getClickedBlock().getLocation().getBlockY()-1,e.getClickedBlock().getLocation().getBlockZ())) {
+						if(ShopKeeper.contains(e.getClickedBlock().getLocation().getBlockX(),e.getClickedBlock().getLocation().getBlockY(),e.getClickedBlock().getLocation().getBlockZ())) {
+							shop.clear();
 							ItemMeta meta = shop_CANNON.getItemMeta();
-							meta.setDisplayName(ChatColor.AQUA+"[Team] CANNON");
+							meta.setDisplayName(ChatColor.DARK_AQUA+"[25 Coins] "+ChatColor.GREEN+"Buy 1 Cannon");
+							List<String> list3 = new ArrayList<String>();
+							list3.add(ChatColor.RESET+"This will spawn in 1 cannon");
+							list3.add(ChatColor.RESET+"so you can fire at the other");
+							list3.add(ChatColor.RESET+"team");
+							meta.setLore(list3);
+							shop_CANNON.setItemMeta(meta);
+							ItemMeta meta2 = shop_FENCE.getItemMeta();
+							meta2.setDisplayName(ChatColor.DARK_AQUA+"[3 Coins] "+ChatColor.GREEN+"Buy 1 Fence Layer");
+							List<String> list2 = new ArrayList<String>();
+							list2.add(ChatColor.RESET+"This will spawn in 1 fence");
+							list2.add(ChatColor.RESET+"layer for extra protection.");
+							meta2.setLore(list2);
+							shop_FENCE.setItemMeta(meta2);
+							ItemMeta meta3 = shop_BONE.getItemMeta();
+							meta3.setDisplayName(ChatColor.DARK_AQUA+"[15 Coins] "+ChatColor.GREEN+"Spawn 5 Skeletons");
+							List<String> list = new ArrayList<String>();
+							list.add(ChatColor.RESET+"The skeletons will attack a");
+							list.add(ChatColor.RESET+"specific player that is not");
+							list.add(ChatColor.RESET+"on your team.");
+							meta3.setLore(list);
+							shop_BONE.setItemMeta(meta3);
+							shop.setItem(0, shop_CANNON);
+							shop.setItem(4, shop_FENCE);
+							shop.setItem(8, shop_BONE);
 							e.getPlayer().openInventory(shop);
 						}
 					}
 				}
+				DataDecoder.DecodeAndInsert();
 			}
 			
 			@EventHandler
 			public void onInventoryClick(InventoryClickEvent e) {
 				if(e.getCurrentItem() != null && e.getInventory() != null && e.getWhoClicked() != null) {
 					if(e.getCurrentItem().equals(shop_CANNON)) {
+						((Player)e.getWhoClicked()).sendMessage(ChatColor.DARK_AQUA+"[CastleClash] "+ChatColor.RED+"This has not been implemented yet.");
+						e.setCancelled(true);
+					} else if(e.getCurrentItem().equals(shop_BONE)) {
+						((Player)e.getWhoClicked()).sendMessage(ChatColor.DARK_AQUA+"[CastleClash] "+ChatColor.RED+"This has not been implemented yet.");
+						e.setCancelled(true);
+					} else if(e.getCurrentItem().equals(shop_FENCE)) {
 						((Player)e.getWhoClicked()).sendMessage(ChatColor.DARK_AQUA+"[CastleClash] "+ChatColor.RED+"This has not been implemented yet.");
 						e.setCancelled(true);
 					}
@@ -97,6 +132,23 @@ public class Mainplugin extends JavaPlugin {
 			public void onPlayerQuit(PlayerQuitEvent e) {
 				Team1.removePlayer(e.getPlayer());
 				Team2.removePlayer(e.getPlayer());
+				
+			}
+			
+			@EventHandler
+			public void onPlayerJoin(PlayerJoinEvent e) {
+				e.setJoinMessage(ChatColor.YELLOW+e.getPlayer().getName()+ChatColor.GRAY+" joined the game. "+ChatColor.BOLD+Bukkit.getServer().getOnlinePlayers().toArray().length+"/"+Bukkit.getServer().getMaxPlayers());
+				e.getPlayer().chat("/spawn");
+			}
+			
+			@EventHandler
+			public void onPlayerPreProcessCommand(PlayerCommandPreprocessEvent e) {
+				if(Team1.inTeam(e.getPlayer()) || Team2.inTeam(e.getPlayer())) {
+					if(e.getMessage().equalsIgnoreCase("/spawn")) {
+						e.getPlayer().sendMessage(ChatColor.DARK_AQUA+"[CastleClash] "+ChatColor.RED+"You cannot run that command while you are in the game.");
+						e.setCancelled(true);
+					}
+				}
 			}
 		}, this);
 	}
@@ -110,13 +162,41 @@ public class Mainplugin extends JavaPlugin {
 					sender.sendMessage("§3[CastleClash: ADMIN] §cA shop is already registered here.");
 				} else {
 					ShopKeeper.addToList(sender.getLocation().getBlockX(), sender.getLocation().getBlockY()-1, sender.getLocation().getBlockZ());
+					sender.sendMessage("§3[CastleClash: ADMIN] §aShop registered.");
 				}
 			} else {
 				sender.sendMessage("§3[CastleClash: ADMIN] §cThere must be obsidian under you to register a shop.");
 			}
-		} else if(c.getName().equalsIgnoreCase("setTeamSpawnPoint")) {
-			sender.sendMessage("§3[CastleClash: ADMIN] §cThis has not been implemented yet. Contact the owner of the server if you think this is a mistake.");
+		} else if(c.getName().equalsIgnoreCase("removeshopblock")) {
+			if(ShopKeeper.contains(sender.getLocation().getBlockX(), sender.getLocation().getBlockY()-1, sender.getLocation().getBlockZ())) {
+				ShopKeeper.remove(sender.getLocation().getBlockX(), sender.getLocation().getBlockY()-1, sender.getLocation().getBlockZ());
+				sender.sendMessage(ChatColor.DARK_AQUA+"[CastleClash: ADMIN] "+ChatColor.GREEN+"Shop was removed.");
+			} else {
+				sender.sendMessage(ChatColor.DARK_AQUA+"[CastleClash: ADMIN] "+ChatColor.RED+"There is no shop under you!");
+			}
+		} else if(c.getName().equalsIgnoreCase("removeallshops")) {
+			ShopKeeper.removeALL();
+			sender.sendMessage(ChatColor.DARK_AQUA+"[CastleClash: ADMIN] "+ChatColor.GREEN+"All shops were removed.");
+		} else if(c.getName().equalsIgnoreCase("setteamspawn")) {
+			if(args.length < 1) {
+				sender.sendMessage(ChatColor.DARK_AQUA+"[CastleClash: ADMIN] "+ChatColor.RED+"Wrong syntax: Not enough arguments.");
+				return false;
+			} else if(args.length > 1) {
+				sender.sendMessage(ChatColor.DARK_AQUA+"[CastleClash: ADMIN] "+ChatColor.RED+"Wrong syntax: Too many arguments.");
+				return false;
+			} else {
+				if(args[0].equalsIgnoreCase("1")) {
+					Team1.setSpawn(sender.getLocation().getBlockX(), sender.getLocation().getBlockY(), sender.getLocation().getBlockZ());
+					sender.sendMessage(ChatColor.DARK_AQUA+"[CastleClash: ADMIN] "+ChatColor.GREEN+"Set spawn for team 1.");
+				} else if(args[0].equalsIgnoreCase("2")) {
+					Team2.setSpawn(sender.getLocation().getBlockX(), sender.getLocation().getBlockY(), sender.getLocation().getBlockZ());
+					sender.sendMessage(ChatColor.DARK_AQUA+"[CastleClash: ADMIN] "+ChatColor.GREEN+"Set spawn for team 2.");
+				}
+			}
+		} else if(c.getName().equalsIgnoreCase("nogame")) {
+			
 		}
-		return false;
+		DataEncoder.Encode();
+		return true;
 	}
 }
