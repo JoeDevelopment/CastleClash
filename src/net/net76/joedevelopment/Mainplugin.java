@@ -31,7 +31,13 @@ public class Mainplugin extends JavaPlugin {
 	private static ItemStack shop_FENCE = new ItemStack(Material.FENCE);
 	private static ItemStack shop_BONE = new ItemStack(Material.BONE);
 	private static ArrayList<Player> team1players = new ArrayList<Player>();
-	
+	/*
+	 * Team 1: RED
+	 * Team 2: BLUE
+	 * 
+	 * (non-Javadoc)
+	 * @see org.bukkit.plugin.java.JavaPlugin#onEnable()
+	 */
 	public void onEnable() {
 		getServer().getPluginManager().registerEvents(new Listener() {
 			@EventHandler
@@ -115,13 +121,13 @@ public class Mainplugin extends JavaPlugin {
 			@EventHandler
 			public void onInventoryClick(InventoryClickEvent e) {
 				if(e.getCurrentItem() != null && e.getInventory() != null && e.getWhoClicked() != null) {
-					if(e.getCurrentItem().equals(shop_CANNON)) {
+					if(e.getCurrentItem().equals(shop_CANNON) && e.getInventory().equals(shop)) {
 						((Player)e.getWhoClicked()).sendMessage(ChatColor.DARK_AQUA+"[CastleClash] "+ChatColor.RED+"This has not been implemented yet.");
 						e.setCancelled(true);
-					} else if(e.getCurrentItem().equals(shop_BONE)) {
+					} else if(e.getCurrentItem().equals(shop_BONE) && e.getInventory().equals(shop)) {
 						((Player)e.getWhoClicked()).sendMessage(ChatColor.DARK_AQUA+"[CastleClash] "+ChatColor.RED+"This has not been implemented yet.");
 						e.setCancelled(true);
-					} else if(e.getCurrentItem().equals(shop_FENCE)) {
+					} else if(e.getCurrentItem().equals(shop_FENCE) && e.getInventory().equals(shop)) {
 						((Player)e.getWhoClicked()).sendMessage(ChatColor.DARK_AQUA+"[CastleClash] "+ChatColor.RED+"This has not been implemented yet.");
 						e.setCancelled(true);
 					}
@@ -137,9 +143,8 @@ public class Mainplugin extends JavaPlugin {
 			
 			@EventHandler
 			public void onPlayerJoin(PlayerJoinEvent e) {
-				e.setJoinMessage(ChatColor.YELLOW+e.getPlayer().getName()+ChatColor.GRAY+" joined the game. "+ChatColor.BOLD+Bukkit.getServer().getOnlinePlayers().toArray().length+"/"+Bukkit.getServer().getMaxPlayers());
+				e.setJoinMessage(ChatColor.YELLOW+e.getPlayer().getName()+ChatColor.GRAY+" joined the game. "+ChatColor.DARK_GRAY+Bukkit.getServer().getOnlinePlayers().toArray().length+"/"+Bukkit.getServer().getMaxPlayers());
 				getServer().broadcastMessage(ChatColor.DARK_AQUA+"[CastleClash] "+ChatColor.GREEN+"A player has joined the game. A total of 6 players in the lobby are needed to start the game.");
-				e.getPlayer().chat("/spawn");
 				if(teamint == 1) {
 					if(Team1.addPlayer(e.getPlayer())) {
 						teamint++;
@@ -231,7 +236,9 @@ public class Mainplugin extends JavaPlugin {
 				}
 			}
 		} else if(c.getName().equalsIgnoreCase("nogame")) {
-			
+			ActiveGame.nogame(sender);
+		} else if(c.getName().equalsIgnoreCase("spawnoverride")) {
+			getServer().dispatchCommand(getServer().getConsoleSender(), "spawn "+sender.getName());
 		}
 		DataEncoder.Encode();
 		return true;

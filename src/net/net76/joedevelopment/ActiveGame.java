@@ -54,6 +54,9 @@ public class ActiveGame {
 				}
 				
 			}, 1000, 1);
+		} else {
+			timer = 0;
+			status = GameStatus.GAME_STARTING;
 		}
 	}
 }

@@ -15,3 +15,15 @@ commands:
     description: Admin command, removes all shop blocks
     usage: /removeallshops
     permission: castleclash.removeallshops
+  setteamspawn:
+    description: Admin command, sets a team spawn
+    usage: /setteamspawn <team ID>
+    permission: castleclash.setteamspawn
+  nogame:
+    description: Admin command, cancels the current game
+    usage: /nogame
+    permission: castleclash.nogame
+  spawnoverride:
+    description: Overrides the /spawn limitation
+    usage: /spawnoverride
+    permission: castleclash.spawnoverride
